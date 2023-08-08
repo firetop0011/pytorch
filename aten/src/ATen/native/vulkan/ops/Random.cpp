@@ -2,6 +2,7 @@
 #include <ATen/CPUGeneratorImpl.h>
 #include <ATen/native/vulkan/ops/Common.h>
 #include <ATen/native/vulkan/ops/QuantizedFunctions.h>
+#include <ATen/native/vulkan/ops/rand_like_native.h>
 #include <torch/library.h>
 #include <vector>
 
@@ -12,7 +13,7 @@ namespace ops {
 
 using namespace api::utils;
 
-Tensor& uniform_(
+static Tensor& uniform_(
     Tensor& self,
     const double from,
     const double to,
