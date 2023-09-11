@@ -22,6 +22,7 @@ from torch._inductor import ir
 from torch._inductor.codecache import CUDACodeCache, DLLWrapper, PyCodeCache
 
 if TYPE_CHECKING:
+    from torch._inductor.codegen.cuda.cuda_kernel import CUDATemplateCaller
     from torch._inductor.select_algorithm import TritonTemplateCaller
 
 from . import config
@@ -230,7 +231,7 @@ class TuningProcessPool:
                 p.wait()
             self.processes = None
 
-    def target(self, choice: TritonTemplateCaller) -> float:
+    def target(self, choice: Union[TritonTemplateCaller, CUDATemplateCaller]) -> float:
         """
         Entry point for the thread-pool helper threads: Wait for an open TuningProcess,
         remove it from the queue, execute the benchmark in that subprocess, and return
@@ -255,8 +256,8 @@ class TuningProcessPool:
 
     def benchmark(
         self,
-        choices: List[TritonTemplateCaller],
-    ) -> Dict[TritonTemplateCaller, float]:
+        choices: List[Union[TritonTemplateCaller, CUDATemplateCaller]],
+    ) -> Dict[Union[TritonTemplateCaller, CUDATemplateCaller], float]:
         """
         Benchmark each choice in a separate process.
         """
@@ -540,8 +541,8 @@ class CUDABenchmarkRequest(BenchmarkRequest):
 
 
 def benchmark_in_sub_process(
-    choices: List[TritonTemplateCaller],
-) -> Dict[TritonTemplateCaller, float]:
+    choices: List[Union[TritonTemplateCaller, CUDATemplateCaller]]
+) -> Dict[Union[TritonTemplateCaller, CUDATemplateCaller], float]:
     """
     Do benchmarking in a subprocess and return the perf number (latency).
     """
