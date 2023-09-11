@@ -207,7 +207,7 @@ PyObject* ParameterClass = nullptr;
 
 static PyObject* THPVariable_NewWithVar(
     PyTypeObject* type,
-    const Variable& _var,
+    Variable _var,
     c10::impl::PyInterpreterStatus status,
     bool allow_preexisting_pyobj = false);
 
