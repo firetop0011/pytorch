@@ -29,6 +29,8 @@ from torch.utils._pytree import (
     treespec_loads,
     treespec_dumps
 )
+from torch._export import Dim, dims, export_
+from torch.fx.tensor_type import TensorType
 
 
 @unittest.skipIf(not torchdynamo.is_dynamo_supported(), "dynamo isn't support")
@@ -349,6 +351,26 @@ class TestExport(TestCase):
                 self.assertTrue("source_fn" in node.meta)
                 self.assertTrue("nn_module_stack" in node.meta)
 
+    def test_export_experimental_api_call_spec(self):
+        # pass dynamic shapes of inputs along with inputs in export call
+        def foo(x, y):
+            return torch.matmul(x, y)
+
+        inputs = (torch.randn(10, 2, 3), torch.randn(10, 3, 4))
+        batch = Dim("batch")
+        efoo = export_(foo, inputs, dynamic_shapes=tuple({0: batch} for t in inputs))
+        self.assertEqual(efoo(*inputs).shape, foo(*inputs).shape)
+
+    def test_export_experimental_api_func_type(self):
+        # type arguments of exported function with expected dynamic shapes
+        batch, M, K, N = dims("batch", "M", "K", "N")
+
+        def qux(x: TensorType[batch, M, K], y: TensorType[batch, K, N]):
+            return torch.matmul(x, y)
+
+        inputs = (torch.randn(10, 2, 3), torch.randn(10, 3, 4))
+        equx = export_(qux, inputs)
+        self.assertEqual(equx(*inputs).shape, qux(*inputs).shape)
 
     def test_error_does_not_reference_eager_fallback(self):
         def fn_ddo(x):
