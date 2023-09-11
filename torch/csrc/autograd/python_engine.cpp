@@ -96,7 +96,11 @@ void PythonEngine::thread_init(
     // PyThreadState_Clear can safely be called from finalize NOTE: deploy.cpp
     // calls `PyInterpreterState_Delete` to destruct PyThreadState, so avoid
     // use-after-free here.
+#if PYBIND11_VERSION_MAJOR >=2 && PYBIND11_VERSION_MINOR >= 11
+    gil->disarm();
+#else
     gil.release();
+#endif
   }
 #endif
 }
@@ -192,6 +196,7 @@ PyObject* THPEngine_run_backward(
           args,
           kwargs,
           "OObb|Obb",
+          // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
           const_cast<char**>(accepted_kwargs),
           &tensors,
           &grad_tensors,
