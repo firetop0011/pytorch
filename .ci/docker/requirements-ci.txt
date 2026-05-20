@@ -125,12 +125,12 @@ opt-einsum==3.3
 #test that import: test_linalg.py
 
 pillow==9.3.0 ; python_version <= "3.8"
-pillow==9.5.0 ; python_version > "3.8"
+pillow==12.2.0 ; python_version > "3.8"
 #Description:  Python Imaging Library fork
 #Pinned versions:
 #test that import:
 
-protobuf==3.20.2
+protobuf==5.29.6
 #Description:  Google’s data interchange format
 #Pinned versions: 3.20.1
 #test that import: test_tensorboard.py
@@ -140,7 +140,7 @@ psutil
 #Pinned versions:
 #test that import: test_profiler.py, test_openmp.py, test_dataloader.py
 
-pytest==7.3.2
+pytest==9.0.3
 #Description: testing framework
 #Pinned versions:
 #test that import: test_typing.py, test_cpp_extensions_aot.py, run_test.py
@@ -261,7 +261,7 @@ ghstack==0.7.1
 #Pinned versions: 0.7.1
 #test that import:
 
-jinja2==3.1.2
+jinja2==3.1.6
 #Description: jinja2 template engine
 #Pinned versions: 3.1.2
 #test that import:
